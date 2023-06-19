@@ -34,13 +34,15 @@ const actorSchema: Schema<IActor> = new Schema({
         type: String,
         required: true,
     },
-    moviesPlayed: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Movie',
-            required: true,
-        },
-    ],
+    moviesPlayed: {
+        type: [String],
+        required: true,
+    },
+    movies: [{
+        type:Types.ObjectId,
+        ref: 'Movie',
+        required: true,
+    }]
 });
 
 export default mongoose.model<IActor>('Actor', actorSchema);

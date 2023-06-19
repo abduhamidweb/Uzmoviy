@@ -1,13 +1,20 @@
 import { Request, Response } from 'express';
 import Movie from '../schemas/Movy.schema.js';
 import { IMovie } from '../interface/interface';
+import UserSchema from '../schemas/User.schema.js';
 
 class MovieController {
     public async createMovie(req: Request, res: Response) {
         try {
             const movieData: IMovie = req.body;
             const movie = new Movie(movieData);
+            await UserSchema.findByIdAndUpdate(movieData.actors, {
+                $push: {
+                    posts: movie._id
+                }
+            });
             const createdMovie = await movie.save();
+        
             res.status(201).json(createdMovie);
         } catch (error) {
             res.status(500).json({ message: 'Error creating movie' });
