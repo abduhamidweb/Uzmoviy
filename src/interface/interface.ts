@@ -2,16 +2,16 @@ import mongoose, { Document, Types } from 'mongoose';
 export interface IActor extends Document {
     name: string;
     familyName: string;
-    dateOfBirth: Date;
+    dateOfBirth: string;
     placeOfBirth: string;
     image: string;
     bio: string;
-    moviesPlayed?: string[];
+    moviesPlayed?: string;
     movies?: Types.ObjectId;
 }
-export interface IMovie extends Document {
+export interface IMovie extends Document { 
     name: string;
     image: string;
-    actors?: string[];
+    actors?: string;
     filmofactor?: Types.ObjectId;
 }

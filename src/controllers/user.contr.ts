@@ -2,8 +2,6 @@ import { Request, Response } from 'express';
 import Actor from "../schemas/User.schema.js";
 import { IActor } from '../interface/interface.js';
 import MovySchema from '../schemas/Movy.schema.js';
-
-
 class ActorController {
     public async createActor(req: Request, res: Response) {
         try {
@@ -11,7 +9,7 @@ class ActorController {
             const actor = new Actor(actorData);
             await MovySchema.findByIdAndUpdate(actor.moviesPlayed, {
                 $push: {
-                    posts: actor._id
+                    filmofactor: actor._id
                 }
             });
             const createdActor = await actor.save();

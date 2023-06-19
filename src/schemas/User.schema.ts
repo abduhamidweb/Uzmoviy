@@ -14,7 +14,7 @@ const actorSchema: Schema<IActor> = new Schema({
         required: true,
     },
     dateOfBirth: {
-        type: Date,
+        type: String,
         required: true,
     },
     placeOfBirth: {
@@ -35,7 +35,7 @@ const actorSchema: Schema<IActor> = new Schema({
         required: true,
     },
     moviesPlayed: {
-        type: [String],
+        type: String,
     },
     movies: [{
         type:Types.ObjectId,

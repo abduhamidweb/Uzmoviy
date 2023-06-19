@@ -10,7 +10,7 @@ class MovieController {
             const movie = new Movie(movieData);
             await UserSchema.findByIdAndUpdate(movieData.actors, {
                 $push: {
-                    posts: movie._id
+                    movies: movie._id
                 }
             });
             const createdMovie = await movie.save();
