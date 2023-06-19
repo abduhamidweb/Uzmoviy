@@ -14,17 +14,16 @@ class ActorController {
             });
             const createdActor = await actor.save();
             res.status(201).json(createdActor);
-        } catch (error) {
-            res.status(500).json({ message: 'Error creating actor' });
+        } catch (error: unknown) {
+            res.status(500).json({ message: 'Error creating actor', error: (error as Error).message });
         }
     }
-
     public async getActors(req: Request, res: Response) {
         try {
             const actors = await Actor.find().populate('movies');
             res.json(actors);
-        } catch (error) {
-            res.status(500).json({ message: 'Error retrieving actors' });
+        } catch (error: unknown) {
+            res.status(500).json({ message: 'Error retrieving actors', error: (error as Error).message });
         }
     }
     public async getActor(req: Request, res: Response) {
@@ -35,8 +34,8 @@ class ActorController {
                 return res.status(404).json({ message: 'Actor not found' });
             }
             res.json(actor);
-        } catch (error) {
-            res.status(500).json({ message: 'Error retrieving actor' });
+        } catch (error: unknown) {
+            res.status(500).json({ message: 'Error retrieving actor', error: (error as Error).message });
         }
     }
 
@@ -51,8 +50,8 @@ class ActorController {
                 return res.status(404).json({ message: 'Actor not found' });
             }
             res.json(updatedActor);
-        } catch (error) {
-            res.status(500).json({ message: 'Error updating actor' });
+        } catch (error: unknown) {
+            res.status(500).json({ message: 'Error updating actor', error: (error as Error).message });
         }
     }
 
@@ -64,8 +63,8 @@ class ActorController {
                 return res.status(404).json({ message: 'Actor not found' });
             }
             res.json(deletedActor);
-        } catch (error) {
-            res.status(500).json({ message: 'Error deleting actor' });
+        } catch (error: unknown) {
+            res.status(500).json({ message: 'Error deleting actor', error: (error as Error).message });
         }
     }
 }

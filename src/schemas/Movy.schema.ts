@@ -7,7 +7,7 @@ import { IMovie } from '../interface/interface';
 const movieSchema: Schema<IMovie> = new Schema({
     name: {
         type: String,
-        required: true,
+        required: [true, 'Film nomi maydoni to\'ldirilishi kerak'],
     },
     image: {
         type: String,
@@ -15,7 +15,7 @@ const movieSchema: Schema<IMovie> = new Schema({
             validator: (value: string) => {
                 return validator.isURL(value);
             },
-            message: 'Invalid image URL',
+            message: "Noto\'g'ri rasm URL manzili",
         },
     },
     actors: {
@@ -24,8 +24,9 @@ const movieSchema: Schema<IMovie> = new Schema({
     filmofactor: [{
         type: Types.ObjectId,
         ref: "Actor",
-        required: true,
+        required: [true, 'Aktorlar maydoni to\'ldirilishi kerak'],
     }]
 });
+
 
 export default mongoose.model<IMovie>('Movie', movieSchema);

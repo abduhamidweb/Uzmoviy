@@ -7,19 +7,19 @@ import { IActor } from '../interface/interface';
 const actorSchema: Schema<IActor> = new Schema({
     name: {
         type: String,
-        required: true,
+        required: [true, 'Ism maydoni to\'ldirilishi kerak'],
     },
     familyName: {
         type: String,
-        required: true,
+        required: [true, 'Familiya maydoni to\'ldirilishi kerak'],
     },
     dateOfBirth: {
         type: String,
-        required: true,
+        required: [true, "Tug'ilgan sana maydoni to\'ldirilishi kerak"],
     },
     placeOfBirth: {
         type: String,
-        required: true,
+        required: [true, "Tug'ilgan joy maydoni to\'ldirilishi kerak"],
     },
     image: {
         type: String,
@@ -27,21 +27,22 @@ const actorSchema: Schema<IActor> = new Schema({
             validator: (value: string) => {
                 return validator.isURL(value);
             },
-            message: 'Invalid image URL',
+            message: (props) => `${props.value} - Noto'g'ri rasm URL manzili`,
         },
     },
     bio: {
         type: String,
-        required: true,
+        required: [true, 'Biografiya maydoni to\'ldirilishi kerak'],
     },
     moviesPlayed: {
         type: String,
     },
     movies: [{
-        type:Types.ObjectId,
+        type: Types.ObjectId,
         ref: 'Movie',
-        required: true,
-    }]
+        required: [true, 'Ko\'rib chiqilgan filmlar maydoni to\'ldirilishi kerak'],
+    }],
 });
+
 
 export default mongoose.model<IActor>('Actor', actorSchema);
