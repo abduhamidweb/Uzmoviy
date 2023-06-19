@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // .env faylidan o'qib oladi
 
 mongoose
-  .connect(process.env.MONGODB_URI as string | "mongodb+srv://abduhamidbotirovweb:abduhamidjon707@cluster0.ab9kvno.mongodb.net/codecrafters?retryWrites=true&w=majority")   
+  .connect("mongodb+srv://abduhamidbotirovweb:abduhamidjon707@cluster0.ab9kvno.mongodb.net/codecrafters?retryWrites=true&w=majority")   
   .then(() => {
     console.log('MongoDB-ga muvaffaqiyatli ulandik');
   })
