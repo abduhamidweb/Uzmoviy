@@ -1,4 +1,4 @@
-import mongoose, { Document } from 'mongoose';
+import mongoose, { Document, ObjectId, Types } from 'mongoose';
 export interface IActor extends Document {
     name: string;
     familyName: string;
@@ -6,10 +6,10 @@ export interface IActor extends Document {
     placeOfBirth: string;
     image: string;
     bio: string;
-    moviesPlayed: string[];
+    moviesPlayed: Types.ObjectId[];
 }
 export interface IMovie extends Document {
     name: string;
     image: string;
-    actors: string[];
+    actors: Types.ObjectId[];
 }

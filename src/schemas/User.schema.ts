@@ -1,6 +1,9 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 import validator from 'validator';
 import { IActor } from '../interface/interface';
+
+
+
 const actorSchema: Schema<IActor> = new Schema({
     name: {
         type: String,
@@ -31,10 +34,13 @@ const actorSchema: Schema<IActor> = new Schema({
         type: String,
         required: true,
     },
-    moviesPlayed: {
-        type: [String],
-        required: true,
-    },
+    moviesPlayed: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'Movie',
+            required: true,
+        },
+    ],
 });
 
 export default mongoose.model<IActor>('Actor', actorSchema);

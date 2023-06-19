@@ -1,9 +1,6 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 import validator from 'validator';
 import { IMovie } from '../interface/interface';
-
-
-
 const movieSchema: Schema<IMovie> = new Schema({
     name: {
         type: String,
@@ -18,10 +15,11 @@ const movieSchema: Schema<IMovie> = new Schema({
             message: 'Invalid image URL',
         },
     },
-    actors: {
-        type: [String],
+    actors: [{
+        type: Types.ObjectId,
+        ref: "Actor",
         required: true,
-    },
+    }],
 });
 
 export default mongoose.model<IMovie>('Movie', movieSchema);
