@@ -20,7 +20,6 @@ const movieSchema: Schema<IMovie> = new Schema({
     },
     actors: {
         type: [String],
-        required: true,
     },
     filmofactor: [{
         type: Types.ObjectId,

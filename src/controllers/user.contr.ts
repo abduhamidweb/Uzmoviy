@@ -29,7 +29,6 @@ class ActorController {
             res.status(500).json({ message: 'Error retrieving actors' });
         }
     }
-
     public async getActor(req: Request, res: Response) {
         try {
             const actorId = req.params.id;

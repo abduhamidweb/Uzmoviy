@@ -6,12 +6,12 @@ export interface IActor extends Document {
     placeOfBirth: string;
     image: string;
     bio: string;
-    moviesPlayed: string[];
+    moviesPlayed?: string[];
     movies?: Types.ObjectId;
 }
 export interface IMovie extends Document {
     name: string;
     image: string;
-    actors: string[];
+    actors?: string[];
     filmofactor?: Types.ObjectId;
 }

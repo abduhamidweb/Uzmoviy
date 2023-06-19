@@ -36,7 +36,6 @@ const actorSchema: Schema<IActor> = new Schema({
     },
     moviesPlayed: {
         type: [String],
-        required: true,
     },
     movies: [{
         type:Types.ObjectId,
