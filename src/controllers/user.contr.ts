@@ -1,187 +1,70 @@
 import { Request, Response } from 'express';
-import { IUser } from '../interface/interface.js';
-import User from '../schemas/User.schema.js';
-import { sendConfirmationEmail } from '../utils/nodemailer.js';
-import { JWT } from '../utils/jwt.js';
-import sha256 from "sha256"
-import { client } from "../db/redis.js"
-class UserController {
-    // Yeni foydalanuvchi qo'shish 
-    async createUser(req: Request, res: Response) {
-        try {
-            const { name, email, password, confirmationCode } = req.body;
-            // Birinchi marta post qilganda foydalanuvchi ma'lumotlarini yuborish
-            if (!confirmationCode) {
-                const generatedConfirmationCode = await sendConfirmationEmail(email);
-                await client.set(email, generatedConfirmationCode)
-                return res.status(200).json({
-                    success: true,
-                    message: "Foydalanuvchi ma'lumotlari yuborildi. Tasdiqlash kodi yuborildi",
-                    confirmationCode: generatedConfirmationCode // Tasdiqlash kodi javob qaytariladi
-                });
-            }
-            // Tasdiqlash kodi tekshirish
-            if (confirmationCode !== await client.get(email)) {
-                return res.status(400).json({
-                    success: false,
-                    error: "Noto'g'ri tasdiqlash kodi"
-                });
-            }
-            const user: IUser = new User({ name, email, password: sha256(password) });
-            await user.save();
-            res.status(201).json({
-                success: true,
-                token: JWT.SIGN({
-                    id: user._id
-                }),
-                data: user
-            });
-        } catch (error) {
-            console.log('error :', error);
-            res.status(500).json({ error: 'Foydalanuvchi qo\'shishda xatolik yuz berdi' });
-        }
-    }
-    // Foydalanuvchilarni olish
-    async getUsers(req: Request, res: Response) {
-        try {
-            let token: any = req.headers.token;
-            const userId = JWT.VERIFY(token).id;
-            // const user: IUser | null = await User.findById(userId);
-            const users: IUser[] | null = await User.find();
-            res.json(users);
-        } catch (error) {
-            res.status(500).json({ error: 'Foydalanuvchilarni olishda xatolik yuz berdi' });
-        }
-    }
-    async getUserById(req: Request, res: Response) {
-        try {
-            let token: any = req.headers.token;
-            const userId = JWT.VERIFY(token).id;
-            // if (!(userId == req.params.id)) {
-            //     return res.status(401).json({
-            //         error: 'Yaroqsiz token not found'
-            //     });
-            // }
+import Actor from "../schemas/User.schema.js";
+import { IActor } from '../interface/interface.js';
 
-            const user: IUser | null = await User.findById(req.params.id).populate('posts');
-            if (user) {
-                res.json(user);
-            } else {
-                res.status(404).json({ error: 'Foydalanuvchi topilmadi' });
-            }
+
+class ActorController {
+    public async createActor(req: Request, res: Response) {
+        try {
+            const actorData: IActor = req.body;
+            const actor = new Actor(actorData);
+            const createdActor = await actor.save();
+            res.status(201).json(createdActor);
         } catch (error) {
-            res.status(500).json({ error: 'Foydalanuvchini olishda xatolik yuz berdi' });
+            res.status(500).json({ message: 'Error creating actor' });
         }
     }
-    // Foydalanuvchini yangilash
-    async updateUser(req: Request, res: Response) {
+
+    public async getActors(req: Request, res: Response) {
         try {
-            const { name, email, password } = req.body;
-            let token: any = req.headers.token;
-            const decodedToken = JWT.VERIFY(token).id;
-            if (!(decodedToken == req.params.id)) {
-                return res.status(401).json({
-                    error: 'Siz faqat o\'zingizning ma\'lumotlaringizni o\'zgartira olasiz'
-                });
-            }
-            const user: IUser | null = await User.findByIdAndUpdate(req.params.id, { name, password, email }, { new: true });
-            if (user) {
-                res.json(user);
-            } else {
-                res.status(404).json({ error: 'Foydalanuvchi topilmadi' });
-            }
+            const actors = await Actor.find();
+            res.json(actors);
         } catch (error) {
-            res.status(500).json({ error: 'Foydalanuvchini yangilashda xatolik yuz berdi' });
+            res.status(500).json({ message: 'Error retrieving actors' });
         }
     }
-    // Foydalanuvchini o'chirish
-    async deleteUser(req: Request, res: Response) {
+
+    public async getActor(req: Request, res: Response) {
         try {
-            let token: any = req.headers.token;
-            const decodedToken = JWT.VERIFY(token).id;
-            if (!(decodedToken == req.params.id)) {
-                return res.status(401).json({
-                    error: 'Siz faqat o\'zingizning ma\'lumotlaringizni o\'zgartira olasiz'
-                });
+            const actorId = req.params.id;
+            const actor = await Actor.findById(actorId);
+            if (!actor) {
+                return res.status(404).json({ message: 'Actor not found' });
             }
-            const user: IUser | null = await User.findByIdAndDelete(req.params.id);
-            if (user) {
-                res.json({ message: 'Foydalanuvchi o\'chirildi' });
-            } else {
-                res.status(404).json({ error: 'Foydalanuvchi topilmadi' });
-            }
+            res.json(actor);
         } catch (error) {
-            res.status(500).json({ error: 'Foydalanuvchini o\'chirishda xatolik yuz berdi' });
+            res.status(500).json({ message: 'Error retrieving actor' });
         }
     }
-    async login(req: Request, res: Response) {
+
+    public async updateActor(req: Request, res: Response) {
         try {
-            const { email, password } = req.body;
-            const user: IUser | null = await User.findOne({ email });
-            if (!user) {
-                res.status(404).json({
-                    success: false,
-                    error: 'User not found'
-                });
-            } else {
-                if (user.password === sha256(password)) {
-                    res.status(201).json({
-                        success: true,
-                        token: JWT.SIGN({ id: user._id }),
-                        data: user
-                    });
-                } else {
-                    res.status(401).json({
-                        success: false,
-                        error: 'Invalid password'
-                    });
-                }
-            }
-        } catch (error: any) {
-            res.status(500).json({
-                success: false,
-                error: error.message
+            const actorId = req.params.id;
+            const actorData: IActor = req.body;
+            const updatedActor = await Actor.findByIdAndUpdate(actorId, actorData, {
+                new: true,
             });
+            if (!updatedActor) {
+                return res.status(404).json({ message: 'Actor not found' });
+            }
+            res.json(updatedActor);
+        } catch (error) {
+            res.status(500).json({ message: 'Error updating actor' });
         }
     }
-    async forget(req: Request, res: Response) {
+
+    public async deleteActor(req: Request, res: Response) {
         try {
-            const { email, confirmationCode } = req.body;
-            if (!confirmationCode) {
-                const generatedConfirmationCode = await sendConfirmationEmail(email);
-                await client.set(email, generatedConfirmationCode)
-                return res.status(200).json({
-                    success: true,
-                    message: "Foydalanuvchi ma'lumotlari yuborildi. Tasdiqlash kodi yuborildi",
-                    confirmationCode: generatedConfirmationCode // Tasdiqlash kodi javob qaytariladi
-                });
+            const actorId = req.params.id;
+            const deletedActor = await Actor.findByIdAndRemove(actorId);
+            if (!deletedActor) {
+                return res.status(404).json({ message: 'Actor not found' });
             }
-            // Tasdiqlash kodi tekshirish
-            if (confirmationCode !== await client.get(email)) {
-                return res.status(400).json({
-                    success: false,
-                    error: "Noto'g'ri tasdiqlash kodi"
-                });
-            }
-            const user: IUser | null = await User.findOne({ email });
-            if (!user) {
-                res.status(404).json({
-                    success: false,
-                    error: 'User not found'
-                });
-            }
-            await User.findOneAndUpdate({ email }, {
-                password: sha256(req.body.password)
-            })
-            res.status(201).json({
-                success: true,
-                token: JWT.SIGN({ id: user ? user._id : null }),
-                data: user
-            });
+            res.json(deletedActor);
         } catch (error) {
-            console.log('error :', error);
-            res.status(500).json({ error: 'Foydalanuvchi qo\'shishda xatolik yuz berdi' });
+            res.status(500).json({ message: 'Error deleting actor' });
         }
     }
 }
-export default new UserController();
+
+export default new ActorController();

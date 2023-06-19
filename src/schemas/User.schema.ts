@@ -1,46 +1,40 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import validator from 'validator';
-import { IUser } from '../interface/interface';
-const User: Schema = new Schema({
+import { IActor } from '../interface/interface';
+const actorSchema: Schema<IActor> = new Schema({
     name: {
         type: String,
         required: true,
-        minlength: 3,
-        maxlength: 15,
-        match: /^[a-zA-Z]+$/,
-        validate: {
-            validator: (value: string) => {
-                return validator.isAlphanumeric(value);
-            },
-            message: 'Username must only contain alphanumeric characters'
-        }
     },
-    email: {
+    familyName: {
         type: String,
         required: true,
-        unique: true,
-        validate: {
-            validator: (value: string) => {
-                return validator.isEmail(value);
-            },
-            message: 'Invalid email address'
-        }
     },
-    password: {
+    dateOfBirth: {
+        type: Date,
+        required: true,
+    },
+    placeOfBirth: {
         type: String,
         required: true,
-        minlength: 4,
-        // validate: {
-        //     validator: (value: any) => {
-        //         return /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(value);
-        //     },
-        //     message: 'Password must contain at least 8 characters including uppercase, lowercase, and numeric characters'
-        // }
     },
-    posts: [{
-        type: mongoose.Types.ObjectId,
-        ref: 'Post'
-    }]
+    image: {
+        type: String,
+        validate: {
+            validator: (value: string) => {
+                return validator.isURL(value);
+            },
+            message: 'Invalid image URL',
+        },
+    },
+    bio: {
+        type: String,
+        required: true,
+    },
+    moviesPlayed: {
+        type: [String],
+        required: true,
+    },
 });
 
-export default mongoose.model<IUser>('User', User);
+export default mongoose.model<IActor>('Actor', actorSchema);

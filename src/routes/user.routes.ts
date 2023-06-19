@@ -1,14 +1,12 @@
-import { Router } from 'express';
-import userContr from '../controllers/user.contr.js';
-import authMiddleware from '../middleware/auth.js';
+import express from 'express';
+import actorController from '../controllers/user.contr.js';
 
-const router = Router();
+const router = express.Router();
 
-router.post('/', userContr.createUser);
-router.get('/', authMiddleware, userContr.getUsers);
-router.get('/:id', authMiddleware, userContr.getUserById);
-router.put('/:id', authMiddleware, userContr.updateUser);
-router.delete('/:id', authMiddleware, userContr.deleteUser);
-router.post('/login', userContr.login);
-router.post('/forget', userContr.forget);
+router.post('/', actorController.createActor.bind(actorController));
+router.get('/', actorController.getActors.bind(actorController));
+router.get('/:id', actorController.getActor.bind(actorController));
+router.put('/:id', actorController.updateActor.bind(actorController));
+router.delete('/:id', actorController.deleteActor.bind(actorController));
+
 export default router;
