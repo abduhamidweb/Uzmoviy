@@ -23,7 +23,7 @@ class ActorController {
 
     public async getActors(req: Request, res: Response) {
         try {
-            const actors = await Actor.find();
+            const actors = await Actor.find().populate('movies');
             res.json(actors);
         } catch (error) {
             res.status(500).json({ message: 'Error retrieving actors' });
@@ -33,7 +33,7 @@ class ActorController {
     public async getActor(req: Request, res: Response) {
         try {
             const actorId = req.params.id;
-            const actor = await Actor.findById(actorId);
+            const actor = await Actor.findById(actorId).populate('movies');
             if (!actor) {
                 return res.status(404).json({ message: 'Actor not found' });
             }

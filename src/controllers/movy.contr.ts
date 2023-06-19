@@ -23,7 +23,7 @@ class MovieController {
 
     public async getMovies(req: Request, res: Response) {
         try {
-            const movies = await Movie.find();
+            const movies = await Movie.find().populate('filmofactor');
             res.json(movies);
         } catch (error) {
             res.status(500).json({ message: 'Error retrieving movies' });
@@ -33,7 +33,7 @@ class MovieController {
     public async getMovie(req: Request, res: Response) {
         try {
             const movieId = req.params.id;
-            const movie = await Movie.findById(movieId);
+            const movie = await Movie.findById(movieId).populate('filmofactor');
             if (!movie) {
                 return res.status(404).json({ message: 'Movie not found' });
             }
