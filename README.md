@@ -1,2 +1,2 @@
-# UsersAndPosts
-Userlar va ularning postlari. auth bilan tsda. 
+# Uzmoviy
+aktiyorlar va ularning kinolar. Kinolar va ularning aktiyorlari.
